@@ -256,10 +256,6 @@ if (faqAccordion) {
     } else {
       clickedAnswer.style.maxHeight = '0px';
     }
-
-    // Rotate the chevron icon for open state
-    const icon = clickedItem.querySelector('.faq-icon');
-    if (icon) icon.classList.toggle('rotate-180', isOpen);
   });
 }
 
