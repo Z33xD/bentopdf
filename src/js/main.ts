@@ -228,25 +228,40 @@ const init = () => {
   dom.backToGridBtn.addEventListener('click', () => switchView('grid'));
   dom.alertOkBtn.addEventListener('click', hideAlert);
 
-  const faqAccordion = document.getElementById('faq-accordion');
-  if (faqAccordion) {
-    faqAccordion.addEventListener('click', (e) => {
-      // @ts-expect-error TS(2339) FIXME: Property 'closest' does not exist on type 'EventTa... Remove this comment to see the full error message
-      const questionButton = e.target.closest('.faq-question');
-      if (!questionButton) return;
+const faqAccordion = document.getElementById('faq-accordion');
+if (faqAccordion) {
+  faqAccordion.addEventListener('click', (e) => {
+    const questionButton = (e.target as HTMLElement).closest('.faq-question');
+    if (!questionButton) return;
 
-      const faqItem = questionButton.parentElement;
-      const answer = faqItem.querySelector('.faq-answer');
+    const clickedItem = questionButton.parentElement as HTMLElement;
+    const clickedAnswer = clickedItem.querySelector('.faq-answer') as HTMLElement;
 
-      faqItem.classList.toggle('open');
-
-      if (faqItem.classList.contains('open')) {
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-      } else {
+    // Close all other open FAQs
+    const allItems = faqAccordion.querySelectorAll('.faq-item');
+    allItems.forEach((item) => {
+      const answer = item.querySelector('.faq-answer') as HTMLElement;
+      if (item !== clickedItem) {
+        item.classList.remove('open');
         answer.style.maxHeight = '0px';
+        const icon = item.querySelector('.faq-icon');
+        if (icon) icon.classList.remove('rotate-180');
       }
     });
-  }
+
+    // Toggle the clicked one
+    const isOpen = clickedItem.classList.toggle('open');
+    if (isOpen) {
+      clickedAnswer.style.maxHeight = clickedAnswer.scrollHeight + 'px';
+    } else {
+      clickedAnswer.style.maxHeight = '0px';
+    }
+
+    // Rotate the chevron icon for open state
+    const icon = clickedItem.querySelector('.faq-icon');
+    if (icon) icon.classList.toggle('rotate-180', isOpen);
+  });
+}
 
   createIcons({ icons });
   console.log('Please share our tool and share the love!');
